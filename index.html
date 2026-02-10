@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M-Power Anonymous Feedback</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+  margin:0;
+  font-family:Poppins, sans-serif;
+  background: linear-gradient(135deg,#0b1d3a,#5b2c9c);
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:white;
+}
+
+.container{
+  width:90%;
+  max-width:450px;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter: blur(15px);
+  padding:30px;
+  border-radius:18px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.3);
+}
+
+h2{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+textarea{
+  width:100%;
+  height:150px;
+  border:none;
+  border-radius:12px;
+  padding:12px;
+  font-size:15px;
+  resize:none;
+  outline:none;
+}
+
+button{
+  width:100%;
+  margin-top:15px;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  background: linear-gradient(90deg,#7f5af0,#2cb67d);
+  color:white;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  transform:scale(1.03);
+}
+
+#status{
+  margin-top:12px;
+  text-align:center;
+  font-size:14px;
+}
+
+.footer{
+  text-align:center;
+  margin-top:18px;
+  font-size:12px;
+  opacity:0.7;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Anonymous Feedback</h2>
+
+<textarea id="feedback" placeholder="Share your thoughts, suggestions or issues..."></textarea>
+
+<button onclick="submitFeedback()">Submit Feedback</button>
+
+<p id="status"></p>
+
+<div class="footer">
+Created by Group 5 TARA
+</div>
+
+</div>
+
+<script>
+
+const SCRIPT_URL = "PASTE_GOOGLE_SCRIPT_URL_HERE";
+
+function submitFeedback(){
+
+  const feedback = document.getElementById("feedback").value;
+
+  if(feedback.trim() === ""){
+    document.getElementById("status").innerText = "Please write feedback";
+    return;
+  }
+
+  fetch(SCRIPT_URL,{
+    method:"POST",
+    body: JSON.stringify({
+      message: feedback
+    })
+  })
+  .then(()=>{
+
+    document.getElementById("status").innerText = "Feedback submitted successfully!";
+    document.getElementById("feedback").value="";
+
+  })
+  .catch(()=>{
+    document.getElementById("status").innerText = "Submission failed";
+  });
+
+}
+
+</script>
+
+</body>
+</html>
