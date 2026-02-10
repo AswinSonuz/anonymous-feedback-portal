@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M-Power Anonymous Feedback</title>
+
+<title>M-Power Feedback</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -13,7 +14,7 @@ body{
   margin:0;
   font-family:Poppins, sans-serif;
   background: linear-gradient(135deg,#0b1d3a,#5b2c9c);
-  height:100vh;
+  min-height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
@@ -22,28 +23,28 @@ body{
 
 .container{
   width:90%;
-  max-width:450px;
+  max-width:500px;
   background:rgba(255,255,255,0.08);
   backdrop-filter: blur(15px);
   padding:30px;
   border-radius:18px;
-  box-shadow:0 8px 30px rgba(0,0,0,0.3);
+  box-shadow:0 8px 30px rgba(0,0,0,0.4);
 }
 
 h2{
   text-align:center;
-  margin-bottom:20px;
 }
 
 textarea{
   width:100%;
-  height:150px;
+  height:120px;
   border:none;
   border-radius:12px;
   padding:12px;
-  font-size:15px;
-  resize:none;
+  margin-top:15px;
+  font-size:14px;
   outline:none;
+  resize:none;
 }
 
 button{
@@ -60,18 +61,32 @@ button{
 }
 
 button:hover{
-  transform:scale(1.03);
+  transform:scale(1.04);
 }
 
 #status{
-  margin-top:12px;
   text-align:center;
+  margin-top:10px;
+  font-size:14px;
+}
+
+.feedbackList{
+  margin-top:25px;
+  max-height:250px;
+  overflow-y:auto;
+}
+
+.feedbackCard{
+  background:rgba(255,255,255,0.1);
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:10px;
   font-size:14px;
 }
 
 .footer{
   text-align:center;
-  margin-top:18px;
+  margin-top:20px;
   font-size:12px;
   opacity:0.7;
 }
@@ -85,11 +100,13 @@ button:hover{
 
 <h2>Anonymous Feedback</h2>
 
-<textarea id="feedback" placeholder="Share your thoughts, suggestions or issues..."></textarea>
+<textarea id="feedbackInput" placeholder="Share your thoughts..."></textarea>
 
 <button onclick="submitFeedback()">Submit Feedback</button>
 
 <p id="status"></p>
+
+<div class="feedbackList" id="feedbackList"></div>
 
 <div class="footer">
 Created by Group 5 TARA
@@ -99,36 +116,35 @@ Created by Group 5 TARA
 
 <script>
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz5s9T4QIzaoPGU-bVt9ONhA_FjBFB0E9aTb4f_J5L52M_m8l0OwtlCVhTkDlNbTtph/exec";
+/* Load feedbacks when page opens */
+function loadFeedbacks(){
 
-function submitFeedback(){
+  const feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
 
-  const feedback = document.getElementById("feedback").value;
+  const list = document.getElementById("feedbackList");
+  list.innerHTML = "";
 
-  if(feedback.trim() === ""){
-    document.getElementById("status").innerText = "Please write feedback";
-    return;
-  }
+  feedbacks.reverse().forEach(text => {
 
-  fetch(SCRIPT_URL,{
-    method:"POST",
-    body: JSON.stringify({
-      message: feedback
-    })
-  })
-  .then(()=>{
+    const div = document.createElement("div");
+    div.className = "feedbackCard";
+    div.innerText = text;
 
-    document.getElementById("status").innerText = "Feedback submitted successfully!";
-    document.getElementById("feedback").value="";
+    list.appendChild(div);
 
-  })
-  .catch(()=>{
-    document.getElementById("status").innerText = "Submission failed";
   });
 
 }
 
-</script>
+/* Submit feedback */
+function submitFeedback(){
 
-</body>
-</html>
+  const input = document.getElementById("feedbackInput");
+  const status = document.getElementById("status");
+
+  if(input.value.trim() === ""){
+    status.innerText = "Please write feedback";
+    return;
+  }
+
+  const feedbacks = JSON.parse(localStorage.getItem("feedbacks
