@@ -9,7 +9,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-
 body{
   margin:0;
   font-family:Poppins, sans-serif;
@@ -31,10 +30,6 @@ body{
   box-shadow:0 8px 30px rgba(0,0,0,0.4);
 }
 
-h2{
-  text-align:center;
-}
-
 textarea{
   width:100%;
   height:120px;
@@ -44,7 +39,6 @@ textarea{
   margin-top:15px;
   font-size:14px;
   outline:none;
-  resize:none;
 }
 
 button{
@@ -57,17 +51,6 @@ button{
   background: linear-gradient(90deg,#7f5af0,#2cb67d);
   color:white;
   cursor:pointer;
-  transition:0.3s;
-}
-
-button:hover{
-  transform:scale(1.04);
-}
-
-#status{
-  text-align:center;
-  margin-top:10px;
-  font-size:14px;
 }
 
 .feedbackList{
@@ -81,7 +64,6 @@ button:hover{
   padding:12px;
   border-radius:10px;
   margin-bottom:10px;
-  font-size:14px;
 }
 
 .footer{
@@ -90,7 +72,6 @@ button:hover{
   font-size:12px;
   opacity:0.7;
 }
-
 </style>
 </head>
 
@@ -116,50 +97,87 @@ Created by Group 5 TARA
 
 <script>
 
-/* Load feedbacks when page opens */
-function loadFeedbacks(){
+/* ================= CONFIG ================= */
 
-  const feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
+const GITHUB_TOKEN = "PASTE_TOKEN_HERE";
+const OWNER = "PASTE_USERNAME";
+const REPO = "mpower-feedback-storage";
 
-  const list = document.getElementById("feedbackList");
-  list.innerHTML = "";
+/* ========================================== */
 
-  feedbacks.slice().reverse().forEach(text => {
 
-    const div = document.createElement("div");
-    div.className = "feedbackCard";
-    div.textContent = text;
+/* Load feedbacks from GitHub */
+async function loadFeedbacks(){
 
-    list.appendChild(div);
+  try{
 
-  });
+    const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/issues`);
+
+    const data = await res.json();
+
+    const list = document.getElementById("feedbackList");
+    list.innerHTML = "";
+
+    data.reverse().forEach(issue => {
+
+      const div = document.createElement("div");
+      div.className = "feedbackCard";
+      div.textContent = issue.title;
+
+      list.appendChild(div);
+
+    });
+
+  }
+  catch(error){
+    console.log("Error loading feedbacks", error);
+  }
 
 }
 
+
 /* Submit feedback */
-function submitFeedback(){
+async function submitFeedback(){
 
   const input = document.getElementById("feedbackInput");
   const status = document.getElementById("status");
 
   if(input.value.trim() === ""){
-    status.innerText = "Please write feedback";
+    status.innerText = "Write feedback";
     return;
   }
 
-  let feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
+  try{
 
-  feedbacks.push(input.value.trim());
+    await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/issues`,{
 
-  localStorage.setItem("feedbacks", JSON.stringify(feedbacks));
+      method:"POST",
 
-  input.value = "";
-  status.innerText = "Feedback submitted successfully";
+      headers:{
+        "Authorization":`token ${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}`,
+        "Content-Type":"application/json"
+      },
 
-  loadFeedbacks();
+      body: JSON.stringify({
+        title: input.value
+      })
+
+    });
+
+    status.innerText = "Feedback submitted";
+    input.value = "";
+
+    loadFeedbacks();
+
+  }
+  catch(error){
+    status.innerText = "Submission failed";
+  }
+
 }
 
-/* Run when page loads */
+
+/* Load when page opens */
 window.onload = loadFeedbacks;
 
 </script>
