@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>M-Power Feedback</title>
+<title>M-Power Anonymous Feedback</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -124,11 +124,11 @@ function loadFeedbacks(){
   const list = document.getElementById("feedbackList");
   list.innerHTML = "";
 
-  feedbacks.reverse().forEach(text => {
+  feedbacks.slice().reverse().forEach(text => {
 
     const div = document.createElement("div");
     div.className = "feedbackCard";
-    div.innerText = text;
+    div.textContent = text;
 
     list.appendChild(div);
 
@@ -147,4 +147,22 @@ function submitFeedback(){
     return;
   }
 
-  const feedbacks = JSON.parse(localStorage.getItem("feedbacks
+  let feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
+
+  feedbacks.push(input.value.trim());
+
+  localStorage.setItem("feedbacks", JSON.stringify(feedbacks));
+
+  input.value = "";
+  status.innerText = "Feedback submitted successfully";
+
+  loadFeedbacks();
+}
+
+/* Run when page loads */
+window.onload = loadFeedbacks;
+
+</script>
+
+</body>
+</html>
